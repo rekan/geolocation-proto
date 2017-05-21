@@ -4,18 +4,39 @@ $(function() {
         getLocation();
     });
 
-    var x = document.getElementById("geodata");
+    var geolocationMapPanel = document.getElementById("geolocationMap");
+    geolocationMapPanel.style.height = '250px';
+    geolocationMapPanel.style.width = '500px';
+    var geolocationDataPanel = document.getElementById("geolocationData");
+    
     function getLocation() {
         alert( "ready!" );
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
+            navigator.geolocation.getCurrentPosition(showPositionOnMap, showError);
+            navigator.geolocation.getCurrentPosition(showPositionAsData, showError);
         } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
+            geolocationMapPanel.innerHTML = "Geolocation is not supported by this browser.";
         }
     }
-    function showPosition(position) {
-        x.innerHTML = "Latitude: " + position.coords.latitude +
+    function showPositionAsData(position) {
+        geolocationDataPanel.innerHTML = "Latitude: " + position.coords.latitude +
             "<br>Longitude: " + position.coords.longitude;
+    }
+
+    function showPositionOnMap(position) {
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        latlon = new google.maps.LatLng(lat, lon);
+
+        var myOptions = {
+            center:latlon,zoom:14,
+            mapTypeId:google.maps.MapTypeId.ROADMAP,
+            mapTypeControl:false,
+            navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+        };
+
+        var map = new google.maps.Map(geolocationMapPanel, myOptions);
+        var marker = new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
     }
 
     function showError(error) {
