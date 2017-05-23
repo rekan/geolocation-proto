@@ -10,8 +10,7 @@ $(function() {
     var geolocationDataPanel = document.getElementById("geolocationData");
 
     function getLocation() {
-        if (navigator.geolocation) {
-            // navigator.geolocation.getCurrentPosition(showPositionOnMap, showError);
+        if (navigator.geolocation) {;
             navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
             geolocationMapPanel.innerHTML = "Geolocation is not supported by this browser.";
