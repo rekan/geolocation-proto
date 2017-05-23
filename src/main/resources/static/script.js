@@ -8,9 +8,8 @@ $(function() {
     geolocationMapPanel.style.height = '250px';
     geolocationMapPanel.style.width = '500px';
     var geolocationDataPanel = document.getElementById("geolocationData");
-    
+
     function getLocation() {
-        alert( "ready!" );
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPositionOnMap, showError);
             navigator.geolocation.getCurrentPosition(showPositionAsData, showError);
@@ -18,9 +17,22 @@ $(function() {
             geolocationMapPanel.innerHTML = "Geolocation is not supported by this browser.";
         }
     }
+
     function showPositionAsData(position) {
-        geolocationDataPanel.innerHTML = "Latitude: " + position.coords.latitude +
-            "<br>Longitude: " + position.coords.longitude;
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        $.ajax({
+            type: "POST",
+            url: "/data",
+            data: JSON.stringify({"latitude": lat, "longitude": lon}),
+            contentType: "application/json; charset=utf-8",
+            success: function(data) {
+                console.log(data);
+                geolocationDataPanel.innerHTML = data;
+            },
+            dataType: "text"
+        });
+
     }
 
     function showPositionOnMap(position) {
