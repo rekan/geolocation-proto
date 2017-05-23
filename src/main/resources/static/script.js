@@ -11,16 +11,19 @@ $(function() {
 
     function getLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPositionOnMap, showError);
-            navigator.geolocation.getCurrentPosition(showPositionAsData, showError);
+            // navigator.geolocation.getCurrentPosition(showPositionOnMap, showError);
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
             geolocationMapPanel.innerHTML = "Geolocation is not supported by this browser.";
         }
     }
 
-    function showPositionAsData(position) {
+    function showPosition(position) {
         lat = position.coords.latitude;
         lon = position.coords.longitude;
+        latlon = new google.maps.LatLng(lat, lon);
+
+        // GET FORMATTED ADDRESS FROM SERVER AND DISPLAY AS TEXT
         $.ajax({
             type: "POST",
             url: "/data",
@@ -31,25 +34,20 @@ $(function() {
                 geolocationDataPanel.innerHTML = data;
             },
             dataType: "text"
-        });
-
+        })
+        // DISPLAY ON MAP
+            .done(function() {
+            var myOptions = {
+                center:latlon,zoom:14,
+                mapTypeId:google.maps.MapTypeId.ROADMAP,
+                mapTypeControl:false,
+                navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+            };
+            var map = new google.maps.Map(geolocationMapPanel, myOptions);
+            var marker = new google.maps.Marker({position:latlon,map:map,title:"You are here!"});})
     }
 
-    function showPositionOnMap(position) {
-        lat = position.coords.latitude;
-        lon = position.coords.longitude;
-        latlon = new google.maps.LatLng(lat, lon);
 
-        var myOptions = {
-            center:latlon,zoom:14,
-            mapTypeId:google.maps.MapTypeId.ROADMAP,
-            mapTypeControl:false,
-            navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
-        };
-
-        var map = new google.maps.Map(geolocationMapPanel, myOptions);
-        var marker = new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
-    }
 
     function showError(error) {
         switch(error.code) {
