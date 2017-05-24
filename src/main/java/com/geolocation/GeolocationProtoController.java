@@ -12,4 +12,7 @@ public class GeolocationProtoController {
         return "index";
     }
 
+    @RequestMapping(value="get-address", method = {RequestMethod.GET, RequestMethod.POST})
+    public String getAddress() { return "address"; }
+
 }
