@@ -7,7 +7,6 @@ $(function () {
     };
 
     var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
     var marker;
 
 
@@ -16,17 +15,19 @@ $(function () {
     });
 
     function searchAddress() {
-        var addressInput = document.getElementById('address-input').value;
+        var addressInput = $("#address-input").val();
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode({address: addressInput}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 var myResult = results[0].geometry.location;
-                console.log(myResult);
+                var lat = myResult.lat();
+                var lng = myResult.lng();
+                $("#coordinates").text("Lat: " + lat + " Lon: " + lng);
                 createMarker(myResult);
                 map.setCenter(myResult);
                 map.setZoom(17);
             } else {
-                $("#wrongaddress").text("The Geocode was not successful for the following reason: " + status);
+                $("#coordinates").text("The Geocode was not successful for the following reason: " + status);
             }
         });
     }
